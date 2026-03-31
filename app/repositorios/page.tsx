@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+const SIMULATED_DELAY_MS = 2000;
+const loadingPlaceholders = [1, 2, 3, 4];
 
 interface RepoProps {
   id: number;
@@ -23,27 +27,51 @@ export default function Repositorios() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let isCancelled = false;
+
     // Busca client-side: acontece depois do componente montar no browser.
     async function loadRepos() {
       try {
-        const res = await fetch('https://api.github.com/users/DaniBoy083/repos');
+        const [res] = await Promise.all([
+          fetch('https://api.github.com/users/DaniBoy083/repos'),
+          new Promise((resolve) => setTimeout(resolve, SIMULATED_DELAY_MS)),
+        ]);
 
         if (!res.ok) {
           throw new Error('Falha ao buscar repositorios.');
         }
 
         const data = (await res.json()) as RepoProps[];
+
+        if (isCancelled) {
+          return;
+        }
+
         setRepos(data);
+        console.log(
+          `Repositorios carregados no cliente apos ${SIMULATED_DELAY_MS}ms:`,
+          data.length,
+        );
       } catch {
+        if (isCancelled) {
+          return;
+        }
+
         setError('Nao foi possivel carregar os repositorios agora.');
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     }
 
     loadRepos();
     console.log('useEffect de Repositorios rodou no cliente'); // Log para demonstrar que isso roda no cliente
-    console.log('Repositorios carregados no cliente:', repos.length); // Log para mostrar quantos repositorios foram carregados no cliente
+    console.log(`Simulando espera de ${SIMULATED_DELAY_MS}ms para demonstrar o CSR.`);
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   return (
@@ -56,7 +84,19 @@ export default function Repositorios() {
         Repositorios do GitHub de DaniBoy083 (renderizados no client side):
       </p>
 
-      {loading && <p className="mt-2 text-gray-600 dark:text-gray-400">Carregando...</p>}
+      {loading && (
+        <div className="mt-6 w-full max-w-xl space-y-3">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Simulando a espera da busca client-side antes da renderizacao do conteudo.
+          </p>
+          {loadingPlaceholders.map((item) => (
+            <div
+              key={item}
+              className="h-12 animate-pulse rounded-lg border border-gray-200 bg-white/80 dark:border-gray-800 dark:bg-zinc-900"
+            />
+          ))}
+        </div>
+      )}
 
       {error && <p className="mt-2 text-red-600 dark:text-red-400">{error}</p>}
 
@@ -84,6 +124,13 @@ export default function Repositorios() {
           <li>Mais trabalho no navegador, podendo afetar dispositivos fracos.</li>
         </ul>
       </section>
+
+      <Link
+        href="/"
+        className="mt-6 inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:bg-zinc-800"
+      >
+        ← Voltar para Home
+      </Link>
     </div>
   );
 }

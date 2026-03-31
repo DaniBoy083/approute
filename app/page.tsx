@@ -1,4 +1,5 @@
 // Home em Server Component: os dados sao buscados no servidor antes do HTML ser enviado.
+import Link from 'next/link';
 
 interface RepoProps {
   id: number;
@@ -58,6 +59,37 @@ export default async function Home() {
           <li>Pode aumentar tempo de resposta se a API for lenta.</li>
         </ul>
       </section>
+
+      {/* Atalhos de navegacao para as demais rotas da aplicacao. */}
+      <nav className="mt-8 w-full max-w-2xl">
+        <h2 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Navegar para</h2>
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <li>
+            <Link
+              href="/repositorios"
+              className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:bg-zinc-800"
+            >
+              Repositorios (Client)
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard"
+              className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:bg-zinc-800"
+            >
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/contatos"
+              className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:bg-zinc-800"
+            >
+              Contatos
+            </Link>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
