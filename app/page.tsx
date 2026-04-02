@@ -1,5 +1,7 @@
 // Home em Server Component: os dados sao buscados no servidor antes do HTML ser enviado.
 import { DonoRepo } from './components/donorepo/donorepo';
+import { CacheObserver } from './components/cache-observer/cache-observer';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from './lib/cache-config';
 import Link from 'next/link';
 
 // Estrutura de cada repositorio retornado pela API do GitHub.
@@ -21,14 +23,20 @@ interface RepoProps {
 interface RepoResponse {
   repos: RepoProps[];
   errorMessage: string;
+  generatedAtIso: string;
 }
 
 // Busca os repositorios no servidor (App Router + Server Component).
 async function getData(): Promise<RepoResponse> {
+  const generatedAtIso = new Date().toISOString();
+
   try {
-    // Faz a chamada para a API e cancela a espera caso o servidor demore demais.
+    // Faz a chamada para a API usando cache persistente com revalidate no servidor.
     const res = await fetch('https://api.github.com/users/DaniBoy083/repos', {
-      signal: AbortSignal.timeout(5000),
+      next: {
+        revalidate: CACHE_REVALIDATE_SECONDS.homeRepos,
+        tags: [CACHE_TAGS.githubRepos],
+      },
     });
 
     // Interrompe o fluxo quando a API responde com erro HTTP.
@@ -43,6 +51,7 @@ async function getData(): Promise<RepoResponse> {
     return {
       repos,
       errorMessage: '',
+      generatedAtIso,
     };
   } catch (error) {
     // Log no servidor para facilitar diagnostico de falhas na busca.
@@ -53,6 +62,7 @@ async function getData(): Promise<RepoResponse> {
       repos: [],
       errorMessage:
         'Nao foi possivel carregar os repositorios agora. Tente novamente em alguns instantes.',
+      generatedAtIso,
     };
   }
 }
@@ -60,7 +70,7 @@ async function getData(): Promise<RepoResponse> {
 // Pagina inicial renderizada no servidor com busca direta da API.
 export default async function Home() {
   // Busca os dados no servidor antes de montar o HTML enviado ao navegador.
-  const { repos, errorMessage } = await getData();
+  const { repos, errorMessage, generatedAtIso } = await getData();
 
   // Seleciona o dono do primeiro repositorio para ser enviado ao componente cliente.
   const repoOwner = repos[0]?.owner;
@@ -141,6 +151,15 @@ export default async function Home() {
           <li>Pode aumentar tempo de resposta se a API for lenta.</li>
         </ul>
       </section>
+
+      {/* Painel client-side para observar o comportamento de cache e acionar revalidate manual. */}
+      <CacheObserver
+        title="Observabilidade de Cache - Home"
+        generatedAtIso={generatedAtIso}
+        revalidateInSeconds={CACHE_REVALIDATE_SECONDS.homeRepos}
+        tags={[CACHE_TAGS.githubRepos]}
+        scope="home"
+      />
 
       {/* Atalhos de navegacao para as demais rotas da aplicacao. */}
       <nav className="mt-8 w-full max-w-2xl">

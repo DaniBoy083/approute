@@ -1,5 +1,6 @@
 // Link do Next para navegacao entre as principais areas da aplicacao.
 import Link from 'next/link';
+import { RevalidateBadge } from '@/app/components/revalidate-badge/revalidate-badge';
 
 // Itens exibidos no menu global do layout raiz.
 const navigationItems = [
@@ -33,6 +34,8 @@ export function GlobalNav() {
             Este menu e global. Ele ajuda a visualizar que algumas rotas pertencem ao grupo <strong>(site)</strong> e outras ao grupo <strong>(admin)</strong>, embora esses nomes nao aparecam na URL.
           </p>
         </div>
+
+        <RevalidateBadge />
 
         {/* Lista de atalhos para as rotas principais do projeto. */}
         <nav aria-label="Navegacao global da aplicacao">

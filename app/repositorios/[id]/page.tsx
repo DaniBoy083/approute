@@ -1,8 +1,10 @@
 // Metadata e tipagem do App Router para a pagina dinamica de detalhe.
 import type { Metadata } from 'next';
+import { CacheObserver } from '@/app/components/cache-observer/cache-observer';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '@/app/lib/cache-config';
 // Link do Next para navegacao entre as rotas da aplicacao.
 import Link from 'next/link';
-// notFound encerra a renderizacao atual e delega o resultado para app/not-found.tsx.
+// notFound encerra a renderizacao atual e delega para o not-found mais proximo do segmento.
 import { notFound } from 'next/navigation';
 
 // Estrutura simplificada da resposta de detalhe de repositorio retornada pela API do GitHub.
@@ -46,8 +48,10 @@ async function getRepositoryById(id: string): Promise<RepoDetail> {
   }
 
   const response = await fetch(`https://api.github.com/repositories/${repositoryId}`, {
-    cache: 'no-store',
-    signal: AbortSignal.timeout(5000),
+    next: {
+      revalidate: CACHE_REVALIDATE_SECONDS.repoDetail,
+      tags: [CACHE_TAGS.githubRepoDetail],
+    },
   });
 
   // Quando a API nao encontra o repositorio, renderizamos a pagina customizada de 404.
@@ -67,8 +71,10 @@ async function getRepositoryById(id: string): Promise<RepoDetail> {
 async function getExampleHttpData(id: string): Promise<ExampleHttpResponse> {
   const simulatedId = (Number(id) % 10) + 1;
   const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${simulatedId}`, {
-    cache: 'no-store',
-    signal: AbortSignal.timeout(5000),
+    next: {
+      revalidate: CACHE_REVALIDATE_SECONDS.exampleHttp,
+      tags: [CACHE_TAGS.exampleHttp],
+    },
   });
 
   if (!response.ok) {
@@ -91,6 +97,7 @@ export async function generateMetadata({ params }: RepoDetailPageProps): Promise
 // Pagina server-side para detalhes de um repositorio acessado via /repositorios/[id].
 export default async function RepositorioDetalhe({ params }: RepoDetailPageProps) {
   const { id } = await params;
+  const generatedAtIso = new Date().toISOString();
 
   // As duas requisicoes HTTP acontecem no servidor antes do HTML ser enviado ao navegador.
   const [repo, exampleHttpData] = await Promise.all([
@@ -199,6 +206,14 @@ export default async function RepositorioDetalhe({ params }: RepoDetailPageProps
             Status simulado: {exampleHttpData.completed ? 'concluido' : 'pendente'}.
           </p>
         </section>
+
+        <CacheObserver
+          title="Observabilidade de Cache - Detalhe de Repositorio"
+          generatedAtIso={generatedAtIso}
+          revalidateInSeconds={CACHE_REVALIDATE_SECONDS.repoDetail}
+          tags={[CACHE_TAGS.githubRepoDetail, CACHE_TAGS.exampleHttp]}
+          scope="repo-detail"
+        />
 
         {/* Navegacao para retornar a listagem ou para a home. */}
         <nav className="flex flex-wrap gap-3">

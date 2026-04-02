@@ -1,5 +1,7 @@
 // Metadata para personalizar o titulo da pagina dinamica de detalhe administrativo.
 import type { Metadata } from 'next';
+import { CacheObserver } from '@/app/components/cache-observer/cache-observer';
+import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from '@/app/lib/cache-config';
 // Link do Next para navegacao entre a area admin e suas subrotas.
 import Link from 'next/link';
 // notFound e usado para invalidar ids incorretos ou inexistentes.
@@ -37,8 +39,10 @@ async function getAdminUserById(id: string): Promise<AdminUserDetail> {
   }
 
   const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`, {
-    cache: 'no-store',
-    signal: AbortSignal.timeout(5000),
+    next: {
+      revalidate: CACHE_REVALIDATE_SECONDS.adminUserDetail,
+      tags: [CACHE_TAGS.adminUserDetail],
+    },
   });
 
   if (response.status === 404) {
@@ -67,6 +71,7 @@ export async function generateMetadata({
 // Pagina server-side de detalhe de usuario administrativo acessada por /admin/usuarios/[id].
 export default async function AdminUserDetailPage({ params }: AdminUserDetailPageProps) {
   const { id } = await params;
+  const generatedAtIso = new Date().toISOString();
   const adminUser = await getAdminUserById(id);
 
   return (
@@ -125,6 +130,14 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
             </div>
           </dl>
         </section>
+
+        <CacheObserver
+          title="Observabilidade de Cache - Admin Usuario"
+          generatedAtIso={generatedAtIso}
+          revalidateInSeconds={CACHE_REVALIDATE_SECONDS.adminUserDetail}
+          tags={[CACHE_TAGS.adminUserDetail]}
+          scope="admin-user"
+        />
 
         {/* Navegacao para retornar ao hub admin ou abrir a pagina cliente. */}
         <div className="flex flex-wrap gap-3">
