@@ -17,6 +17,7 @@ Este repositorio existe para estudo pratico de:
 - Home server-side em `app/page.tsx`.
 - Componente cliente `DonoRepo` renderizado dentro da home server-side.
 - Lista de repositórios client-side em `app/repositorios/page.tsx`.
+- Lista de repositórios client-side via API interna em `app/repositorios-api/page.tsx`.
 - Rota dinâmica server-side de repositório em `app/repositorios/[id]/page.tsx`.
 - Página `not-found` estilizada em `app/not-found.tsx`.
 - Página `not-found` exclusiva de repositórios em `app/repositorios/not-found.tsx`.
@@ -28,6 +29,7 @@ Este repositorio existe para estudo pratico de:
 - Menu global no layout raiz para navegar por todas as áreas.
 - Banner global deixando explicito o carater academico do projeto.
 - Painel visual para observar cache e revalidate diretamente na interface.
+- API Playground em `/api-playground` para testar GET, POST, PATCH e DELETE na interface.
 
 ## Estrutura principal de componentes e utilitarios
 
@@ -38,6 +40,38 @@ Este repositorio existe para estudo pratico de:
 - `app/components/cache-observer/cache-observer.tsx`: painel client-side para visualizar cache e disparar revalidacao.
 - `app/lib/cache-config.ts`: constantes centralizadas de tempo de revalidate e tags.
 - `app/api/cache/revalidate/route.ts`: endpoint server-side para revalidacao manual.
+- `app/api/health/route.ts`: endpoint de healthcheck e teste de metodos HTTP.
+- `app/api/repos/route.ts`: endpoint de colecao para listar e simular operacoes em repositorios.
+- `app/api/repos/[id]/route.ts`: endpoint por id para detalhe e simulacoes de alteracao/exclusao.
+- `app/api-playground/api-playground-client.tsx`: interface interativa para testar todos os endpoints API.
+
+## API Routes novas
+
+### `GET|POST|PATCH|DELETE /api/health`
+
+- Healthcheck simples para validar disponibilidade da API.
+- Tambem funciona como endpoint de teste de metodos sem persistencia.
+
+### `GET|POST|PATCH|DELETE /api/repos`
+
+- `GET`: lista repositorios de um usuario GitHub.
+- Query params:
+	- `user` (opcional, padrao `DaniBoy083`)
+	- `limit` (opcional, padrao `10`, faixa `1-50`)
+- `POST`: simula criacao de recurso na colecao (sem banco).
+- `PATCH`: simula atualizacao parcial em lote (sem banco).
+- `DELETE`: simula exclusao em lote (exige `?confirm=true`).
+
+### `GET|POST|PATCH|DELETE /api/repos/[id]`
+
+- `GET`: retorna detalhe do repositorio pelo id numerico.
+- `POST`: simula criacao de anotacao vinculada ao recurso (sem banco).
+- `PATCH`: simula atualizacao parcial do recurso por id (sem banco).
+- `DELETE`: simula exclusao do recurso por id (exige `?confirm=true`).
+
+### Observacao sobre persistencia
+
+- Os metodos de escrita (`POST`, `PATCH`, `DELETE`) sao didaticos e nao persistem dados em banco.
 
 ## Estrutura de rotas
 
@@ -144,7 +178,9 @@ npm run start
 
 - `/`
 - `/repositorios`
+- `/repositorios-api`
 - `/repositorios/1`
+- `/api-playground`
 - `/dashboard`
 - `/contatos`
 - `/admin`

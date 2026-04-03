@@ -27,9 +27,11 @@ export function CacheObserver({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState('');
-  const [nowMs, setNowMs] = useState(() => Date.now());
+  const [nowMs, setNowMs] = useState<number | null>(null);
 
   useEffect(() => {
+    setNowMs(Date.now());
+
     const timer = setInterval(() => {
       setNowMs(Date.now());
     }, 1000);
@@ -39,7 +41,7 @@ export function CacheObserver({
 
   const generatedAtMs = useMemo(() => new Date(generatedAtIso).getTime(), [generatedAtIso]);
   const expiresAtMs = generatedAtMs + revalidateInSeconds * 1000;
-  const remainingSeconds = Math.max(0, Math.floor((expiresAtMs - nowMs) / 1000));
+  const remainingSeconds = nowMs === null ? null : Math.max(0, Math.floor((expiresAtMs - nowMs) / 1000));
 
   function formatDate(isoDate: string) {
     return new Date(isoDate).toLocaleString('pt-BR');
@@ -99,7 +101,9 @@ export function CacheObserver({
         <div className="rounded-lg border border-violet-200 bg-white/80 p-3 dark:border-violet-900 dark:bg-zinc-900/70 sm:col-span-2">
           <dt className="text-xs uppercase tracking-wide text-violet-700 dark:text-violet-300">Tempo para revalidar</dt>
           <dd className="mt-1 font-medium">
-            {remainingSeconds > 0
+            {remainingSeconds === null
+              ? 'Calculando janela de cache...'
+              : remainingSeconds > 0
               ? `${remainingSeconds}s restantes para a janela atual de cache`
               : 'Janela expirada. A proxima visita pode gerar novo fetch.'}
           </dd>

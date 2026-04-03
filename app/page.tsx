@@ -167,13 +167,29 @@ export default async function Home() {
         <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
           Dashboard e Contatos agora estao organizados no grupo <strong>(site)</strong>, enquanto a nova pagina Admin foi criada no grupo <strong>(admin)</strong>. Esses nomes ajudam a organizar o projeto, mas nao entram na URL.
         </p>
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-6">
+          <li>
+            <Link
+              href="/api-playground"
+              className="flex items-center justify-center rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800 transition hover:border-blue-400 hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:border-blue-700 dark:hover:bg-blue-950/60"
+            >
+              API Playground
+            </Link>
+          </li>
           <li>
             <Link
               href="/repositorios"
               className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:bg-zinc-800"
             >
-              Repositorios (Client)
+              Repositorios (GitHub)
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/repositorios-api"
+              className="flex items-center justify-center rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:border-emerald-700 dark:hover:bg-emerald-950/60"
+            >
+              Repositorios (API)
             </Link>
           </li>
           <li>

@@ -5,7 +5,9 @@ import { RevalidateBadge } from '@/app/components/revalidate-badge/revalidate-ba
 // Itens exibidos no menu global do layout raiz.
 const navigationItems = [
   { href: '/', label: 'Home' },
+  { href: '/api-playground', label: 'API Playground' },
   { href: '/repositorios', label: 'Repositorios' },
+  { href: '/repositorios-api', label: 'Repositorios API' },
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/contatos', label: 'Contatos' },
   { href: '/admin', label: 'Admin' },
@@ -39,7 +41,7 @@ export function GlobalNav() {
 
         {/* Lista de atalhos para as rotas principais do projeto. */}
         <nav aria-label="Navegacao global da aplicacao">
-          <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
+          <ul className="grid grid-cols-2 gap-3 md:grid-cols-5 xl:grid-cols-9">
             {navigationItems.map((item) => (
               <li key={item.href}>
                 <Link

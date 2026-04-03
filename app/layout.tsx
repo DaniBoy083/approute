@@ -27,6 +27,70 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "App Router Playground - Next.js 16",
   description: "Aplicacao academica para demonstrar App Router, cache, revalidate e route groups no Next.js 16.",
+  applicationName: "App Router Playground",
+  keywords: [
+    "next.js 16",
+    "app router",
+    "react server components",
+    "client components",
+    "cache revalidation",
+    "revalidateTag",
+    "route groups",
+    "typescript",
+    "estudo nextjs",
+    "arquitetura web",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    title: "App Router Playground - Next.js 16",
+    description:
+      "Projeto de estudos com App Router, cache observability, invalidacao manual e separacao de rotas por grupos.",
+    siteName: "App Router Playground",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "https://nextjs.org/api/og?title=App%20Router%20Playground",
+        width: 1200,
+        height: 630,
+        alt: "Banner Open Graph do App Router Playground",
+      },
+      {
+        url: "https://nextjs.org/static/blog/next-13/twitter-card.png",
+        width: 1200,
+        height: 630,
+        alt: "Imagem Next.js App Router",
+      },
+      {
+        url: "https://opengraph.githubassets.com/1/vercel/next.js",
+        width: 1200,
+        height: 630,
+        alt: "Repositorio oficial do Next.js no GitHub",
+      },
+      {
+        url: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Nextjs-logo.svg",
+        alt: "Logo do Next.js",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "App Router Playground - Next.js 16",
+    description:
+      "Aplicacao academica com rotas App Router, cache e revalidacao manual no Next.js 16.",
+    images: ["https://nextjs.org/api/og?title=App%20Router%20Playground"],
+  },
 };
 
 // Layout raiz que envolve todas as paginas da pasta app/.
